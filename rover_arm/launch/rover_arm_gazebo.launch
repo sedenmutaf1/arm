@@ -1,0 +1,28 @@
+<launch>
+
+  
+  <param name="robot_description" textfile="$(find rover_arm)/urdf/rover_arm.urdf" />
+
+ 
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="worlds/empty.world"/>
+    <arg name="paused" value="true"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>
+
+
+  
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model"
+        args="-urdf -model rover_arm -param robot_description"
+        output="screen" />
+  
+  <rosparam file ="$(find rover_arm)/config/controller.yaml" command="load"/>
+	<node name= "controller_spawner" pkg= "controller_manager" type="spawner" respawn="false" output="screen" args="joint_state_controller rover_arm_controller "/>
+
+	
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen"/>     
+
+</launch>
